@@ -1,0 +1,30 @@
+{% extends "employment/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'employee' %}">Employee Dashboard</a>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'company' %}">Companies</a>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'your_company' %}">Your Companies</a>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
+    <br>
+    <hr>
+    
+    <h2>Signed-in as {{ request.user }}</h2>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'create_company' %}">Create Your Company</a>
+    <hr>
+    {% for company in companies.all %}
+    
+        <div style="border: px; border-style: solid; padding-left: 10px; border-radius: 5px;">
+            <b>{{ company.name }}</b>
+            <br>
+            Creator: {{ company.creator }}
+
+        </div><br>
+        {% if company.creator != request.user and employee.company != company %}
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'join_company' id=company.name %}">Join This Company</a>
+        {% endif %}
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'company_dashboard' id=company.name %}">View {{company.name}} Dashboard</a>
+    <hr>
+    {% endfor %}
+
+{% endblock %}
