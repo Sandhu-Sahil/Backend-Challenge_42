@@ -1,7 +1,3 @@
-from asyncio.windows_events import NULL
-from importlib.resources import contents
-from logging import NullHandler
-from urllib import request
 from django.shortcuts import  HttpResponse, HttpResponseRedirect, render
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
@@ -71,6 +67,8 @@ def register(request):
     else:
         return render(request, "employment/register.html")
 
+
+@login_required
 def employee_view(request):
     his  = History.objects.filter(user = request.user)
     if Employee.objects.filter(user = request.user):
@@ -83,6 +81,8 @@ def employee_view(request):
     }
     return render(request, "employment/employee.html", content)
 
+
+@login_required
 def companies(request):
     comp = Company.objects.all()
     if Employee.objects.filter(user = request.user):
@@ -96,6 +96,7 @@ def companies(request):
     return render(request, "employment/companies.html", context)
 
 
+@login_required
 def create_company(request):
     if request.method == "POST":
         comapny = request.POST.get("company")
@@ -106,6 +107,7 @@ def create_company(request):
         return render(request, "employment/create_company.html")
 
 
+@login_required
 def your_company(request):
     comp = Company.objects.filter(creator = request.user)
     context={
@@ -113,6 +115,8 @@ def your_company(request):
     }
     return render(request, "employment/your_company.html", context)
 
+
+@login_required
 def join_company(request, id):
     print(id)
     if Employee.objects.filter(user = request.user):
@@ -132,6 +136,8 @@ def join_company(request, id):
         emp.save()
         return HttpResponseRedirect(reverse("employee"))
 
+
+@login_required
 def company_dashboard(request, id):
     comp = Company.objects.get(name = id)
     his  = History.objects.filter(company = Company.objects.get(name = id))
@@ -149,6 +155,8 @@ def company_dashboard(request, id):
     print(comp)
     return render(request, "employment/company_dashboard.html", content)
 
+
+@login_required
 def leave_company(request):
     emp = Employee.objects.get(user=request.user)
     history = History.objects.create(user = request.user, company = emp.company, join_date = emp.join_date)
@@ -164,3 +172,4 @@ def leave_company(request):
         'employ': emp,
     }
     return render(request, "employment/employee.html", content)
+
